@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>הנוקמים: עלייתו של ד"ר דום | Avengers: Doomsday</title>
+    <!-- טעינת גופנים מותאמים לעברית ולאנגלית מ-Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Heebo:wght@300;400;600;800;900&family=Rubik:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- טעינת Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- טעינת ספריית אייקונים Lucide -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Heebo', 'sans-serif'],
+                        display: ['Rubik', 'sans-serif'],
+                        cinematic: ['Cinzel', 'serif'],
+                    },
+                    colors: {
+                        doom: {
+                            dark: '#050806',
+                            darker: '#020403',
+                            green: '#10b981',
+                            emerald: '#047857',
+                            glow: '#34d399',
+                            silver: '#94a3b8',
+                            metal: '#1e293b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* הגדרות בסיס ואנימציות מותאמות אישית */
+        :root {
+            --doom-glow: rgba(16, 185, 129, 0.45);
+            --doom-emerald: #059669;
+            --doom-dark: #050806;
+        }
+
+        body {
+            background-color: var(--doom-dark);
+            color: #f8fafc;
+            overflow-x: hidden;
+            selection-background-color: #10b981;
+            selection-color: #000;
+        }
+
+        /* פס התקדמות גלילה עליון */
+        #scroll-progress {
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #059669, #34d399, #a7f3d0);
+            width: 0%;
+            z-index: 100;
+            box-shadow: 0 0 15px #10b981;
+            transition: width 0.1s ease-out;
+        }
+
+        /* אנימציית ערפל קסם אפל ברקע */
+        @keyframes mysticPulse {
+            0%, 100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 0.35;
+            }
+            50% {
+                transform: scale(1.15) rotate(3deg);
+                opacity: 0.6;
+            }
+        }
+
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+
+        @keyframes glitchText {
+            0% { text-shadow: 2px 0 #10b981, -2px 0 #ef4444; }
+            20% { text-shadow: -2px 0 #10b981, 2px 0 #3b82f6; }
+            40% { text-shadow: 2px 0 #10b981, -2px 0 #ef4444; }
+            60% { text-shadow: none; }
+            100% { text-shadow: none; }
+        }
+
+        @keyframes borderBeam {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes spinSlow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes spinReverseSlow {
+            from { transform: rotate(360deg); }
+            to { transform: rotate(0deg); }
+        }
+
+        /* אפקט זוהר לדוקטור דום */
+        .doom-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            background: radial-gradient(circle, rgba(16,185,129,0.45) 0%, rgba(4,120,87,0.1) 60%, transparent 100%);
+            animation: mysticPulse 8s infinite ease-in-out;
+            pointer-events: none;
+        }
+
+        .hero-title-glow {
+            text-shadow: 0 0 30px rgba(16, 185, 129, 0.5), 0 0 60px rgba(4, 120, 87, 0.3);
+        }
+
+        .glitch-hover:hover {
+            animation: glitchText 0.4s infinite;
+        }
+
+        /* אנימציות גלילה (Scroll Reveal) */
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-up.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-right {
+            opacity: 0;
+            transform: translateX(60px);
+            transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-right.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .reveal-left {
+            opacity: 0;
+            transform: translateX(-60px);
+            transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-left.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .reveal-scale {
+            opacity: 0;
+            transform: scale(0.88);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-scale.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* כרטיסיות עם גבול מתכתי מונפש */
+        .doom-card {
+            background: linear-gradient(145deg, rgba(15, 23, 20, 0.85), rgba(6, 11, 9, 0.95));
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            backdrop-filter: blur(12px);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), border-color 0.3s ease, box-shadow 0.4s ease;
+        }
+
+        .doom-card:hover {
+            transform: translateY(-8px) scale(1.01);
+            border-color: rgba(52, 211, 153, 0.7);
+            box-shadow: 0 15px 35px -10px rgba(16, 185, 129, 0.3);
+        }
+
+        /* טבעות קסם של המולטיוורס */
+        .multiverse-ring {
+            border: 1px dashed rgba(16, 185, 129, 0.35);
+            border-radius: 50%;
+            animation: spinSlow 45s linear infinite;
+        }
+        .multiverse-ring-inner {
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            border-radius: 50%;
+            animation: spinReverseSlow 30s linear infinite;
+        }
+
+        /* אפקט מתכת מוברשת */
+        .latverian-steel {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #1e293b 100%);
+            background-size: 200% 200%;
+            animation: borderBeam 6s ease infinite;
+        }
+
+        /* התאמת סרגל גלילה */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #020403;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #047857;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #10b981;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-emerald-500 selection:text-black">
+
+    <!-- פס התקדמות גלילה -->
+    <div id="scroll-progress"></div>
+
+    <!-- ניווט עליון צף -->
+    <nav class="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[94%] max-w-5xl rounded-2xl bg-black/70 backdrop-blur-xl border border-emerald-500/25 px-5 py-3 shadow-2xl transition-all duration-300" id="navbar">
+        <div class="flex items-center justify-between">
+            <a href="#hero" class="flex items-center gap-2.5 group">
+                <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-900 flex items-center justify-center shadow-lg shadow-emerald-500/30 group-hover:rotate-12 transition-transform">
+                    <i data-lucide="shield-alert" class="w-5 h-5 text-white"></i>
+                </div>
+                <div>
+                    <span class="font-display font-black text-base sm:text-lg tracking-wide text-white block leading-none">הנוקמים: דומסדיי</span>
+                    <span class="text-[10px] font-cinematic tracking-widest text-emerald-400 uppercase">Avengers: Doomsday</span>
+                </div>
+            </a>
+
+            <div class="hidden md:flex items-center gap-6 text-sm font-medium text-slate-300">
+                <a href="#overview" class="hover:text-emerald-400 transition-colors">סקירה</a>
+                <a href="#plot" class="hover:text-emerald-400 transition-colors">התנגשות היקומים</a>
+                <a href="#cast" class="hover:text-emerald-400 transition-colors">צוות השחקנים</a>
+                <a href="#production" class="hover:text-emerald-400 transition-colors">הפקה ופיתוח</a>
+            </div>
+
+            <a href="#countdown" class="px-4 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-500 text-emerald-300 hover:text-black border border-emerald-500/40 text-xs sm:text-sm font-bold transition-all duration-300 shadow-lg shadow-emerald-900/20">
+                18 בדצמבר 2026
+            </a>
+        </div>
+    </nav>
+
+    <!-- אזור פתיחה (Hero Section) עם פרלקס ואנימציות CSS -->
+    <header id="hero" class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 px-4">
+        <!-- אורות רקע מונפשים -->
+        <div class="doom-orb w-[350px] h-[350px] sm:w-[600px] sm:h-[600px] -top-20 -right-20"></div>
+        <div class="doom-orb w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] bottom-0 -left-20" style="animation-delay: -4s;"></div>
+
+        <!-- טבעות מולטיוורס מסתובבות ברקע -->
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none opacity-40">
+            <div class="multiverse-ring w-[320px] h-[320px] sm:w-[580px] sm:h-[580px] lg:w-[780px] lg:h-[780px] flex items-center justify-center">
+                <div class="multiverse-ring-inner w-[220px] h-[220px] sm:w-[400px] sm:h-[400px] lg:w-[540px] lg:h-[540px]"></div>
+            </div>
+        </div>
+
+        <!-- קנבס חלקיקי אנרגיה ירוקים -->
+        <canvas id="particles-canvas" class="absolute inset-0 w-full h-full pointer-events-none opacity-60"></canvas>
+
+        <!-- תוכן מרכזי עם אפקט Parallax בגלילה -->
+        <div id="hero-content" class="relative z-10 max-w-5xl mx-auto text-center space-y-6">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 text-xs sm:text-sm font-semibold tracking-wider uppercase shadow-lg animate-bounce">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                השלב השישי של היקום הקולנועי של מארוול • סאגת המולטיוורס
+            </div>
+
+            <div class="space-y-2">
+                <p class="font-cinematic text-emerald-400/90 text-sm sm:text-xl tracking-[0.35em] uppercase font-bold">
+                    MARVEL STUDIOS PRESENTS
+                </p>
+                <h1 class="font-display font-black text-5xl sm:text-7xl md:text-8xl tracking-tight text-white hero-title-glow leading-tight">
+                    הנוקמים: <br class="sm:hidden">
+                    <span class="bg-gradient-to-l from-emerald-300 via-emerald-500 to-teal-200 bg-clip-text text-transparent glitch-hover">
+                        עלייתו של ד"ר דום
+                    </span>
+                </h1>
+                <h2 class="font-cinematic text-xl sm:text-3xl md:text-4xl text-slate-300 tracking-[0.2em] font-bold pt-2">
+                    AVENGERS: DOOMSDAY
+                </h2>
+            </div>
+
+            <p class="max-w-2xl mx-auto text-slate-300 text-base sm:text-lg md:text-xl leading-relaxed font-light">
+                בעיצומה של קריסת הרב-יקום, גיבורים משלושה עולמות מקבילים מתאחדים מול האיום הקיומי הגדול ביותר שידע היקום: 
+                <strong class="text-emerald-400 font-bold">ויקטור פון דום</strong>, בגילומו של רוברט דאוני ג'וניור.
+            </p>
+
+            <!-- מסיכת דוקטור דום וקטורית מונפשת -->
+            <div class="pt-4 flex justify-center">
+                <div class="relative group cursor-pointer" onclick="document.getElementById('overview').scrollIntoView({behavior: 'smooth'})">
+                    <div class="absolute -inset-3 bg-emerald-500/20 rounded-full blur-xl group-hover:bg-emerald-500/40 transition-all duration-500"></div>
+                    <svg class="w-20 h-24 sm:w-24 sm:h-28 text-slate-200 drop-shadow-[0_0_15px_rgba(16,185,129,0.6)] transition-transform duration-500 group-hover:scale-110" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- ברדס ירוק -->
+                        <path d="M50 5C22 5 10 28 10 58C10 88 26 112 50 116C74 112 90 88 90 58C90 28 78 5 50 5Z" fill="#064e3b" stroke="#10b981" stroke-width="2.5"/>
+                        <!-- מסיכת מתכת -->
+                        <path d="M50 18C32 18 24 34 24 56C24 78 35 98 50 102C65 98 76 78 76 56C76 34 68 18 50 18Z" fill="#334155" stroke="#94a3b8" stroke-width="2"/>
+                        <!-- קו מצח וגבות זועמות -->
+                        <path d="M28 45L45 50M72 45L55 50" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>
+                        <!-- עיניים זוהרות -->
+                        <path d="M32 51L44 53L41 57L31 55Z" fill="#34d399" class="animate-pulse"/>
+                        <path d="M68 51L56 53L59 57L69 55Z" fill="#34d399" class="animate-pulse"/>
+                        <!-- פתחי אוורור בפה -->
+                        <rect x="38" y="74" width="24" height="14" rx="3" fill="#0f172a" stroke="#64748b" stroke-width="1.5"/>
+                        <line x1="43" y1="74" x2="43" y2="88" stroke="#64748b" stroke-width="1.5"/>
+                        <line x1="50" y1="74" x2="50" y2="88" stroke="#64748b" stroke-width="1.5"/>
+                        <line x1="57" y1="74" x2="57" y2="88" stroke="#64748b" stroke-width="1.5"/>
+                        <!-- ניטים במסיכה -->
+                        <circle cx="30" cy="34" r="1.5" fill="#cbd5e1"/>
+                        <circle cx="70" cy="34" r="1.5" fill="#cbd5e1"/>
+                        <circle cx="29" cy="68" r="1.5" fill="#cbd5e1"/>
+                        <circle cx="71" cy="68" r="1.5" fill="#cbd5e1"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="pt-4 flex flex-wrap items-center justify-center gap-4">
+                <a href="#plot" class="px-7 py-3.5 rounded-2xl bg-gradient-to-l from-emerald-500 to-teal-600 text-black font-extrabold text-sm sm:text-base shadow-xl shadow-emerald-500/25 hover:shadow-emerald-500/50 hover:-translate-y-1 transition-all flex items-center gap-2">
+                    <span>גלה את העלילה</span>
+                    <i data-lucide="arrow-down-left" class="w-5 h-5"></i>
+                </a>
+                <a href="#cast" class="px-7 py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/15 text-white font-bold text-sm sm:text-base backdrop-blur-md hover:-translate-y-1 transition-all flex items-center gap-2">
+                    <i data-lucide="users" class="w-5 h-5 text-emerald-400"></i>
+                    <span>צוות השחקנים הענק</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- חץ גלילה תחתון -->
+        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 animate-bounce text-emerald-400/70">
+            <i data-lucide="chevrons-down" class="w-7 h-7"></i>
+        </div>
+    </header>
+
+    <!-- סקירה כללית ותעודת זהות (בסגנון Infobox ויקיפדי מודרני) -->
+    <section id="overview" class="py-24 px-4 relative">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+                
+                <!-- טקסט אנציקלופדי מעוצב -->
+                <div class="lg:col-span-7 space-y-6 reveal-right">
+                    <div class="inline-flex items-center gap-2 text-emerald-400 font-bold text-sm tracking-wider uppercase">
+                        <i data-lucide="book-open" class="w-4 h-4"></i>
+                        <span>מתוך הערך האנציקלופדי</span>
+                    </div>
+                    <h2 class="font-display font-black text-3xl sm:text-5xl text-white leading-tight">
+                        הסרט החמישי בסדרת <span class="text-emerald-400">"הנוקמים"</span>
+                    </h2>
+                    <p class="text-slate-300 text-lg leading-relaxed">
+                        <strong>"הנוקמים: עלייתו של ד"ר דום"</strong> (באנגלית: <em>Avengers: Doomsday</em>) הוא סרט גיבורי-על אמריקאי מבית אולפני מארוול וחברת ההפקה AGBO, המופץ על ידי סרטי אולפני וולט דיסני. הסרט מהווה את הסרט ה-39 ביקום הקולנועי של מארוול (MCU) ואת שיאו של השלב השישי וסאגת המולטיוורס.
+                    </p>
+                    <p class="text-slate-300 text-lg leading-relaxed">
+                        הסרט מבוים על ידי האחים <strong>אנתוני וג'ו רוסו</strong> (ששבו לביים לאחר הצלחתם ב"מלחמת האינסוף" ו"סוף המשחק"), על פי תסריט מאת <strong>מייקל וולדרון</strong> ו<strong>סטיבן מק'פילי</strong>. הסרט מתוכנן לצאת לאקרנים בארצות הברית ב-<strong>18 בדצמבר 2026</strong>, כאשר סרט ההמשך הישיר שלו, <em>"הנוקמים: מלחמות סודיות"</em> (Secret Wars), צפוי לצאת ב-17 בדצמבר 2027.
+                    </p>
+
+                    <!-- ציטוט מרכזי של הבמאים -->
+                    <div class="p-6 rounded-2xl bg-emerald-950/30 border-r-4 border-emerald-500 space-y-2 my-6">
+                        <p class="italic text-slate-200 text-base sm:text-lg">
+                            "ויקטור פון דום הוא דמות גותית, פגועה עמוקות מטראומה ומונעת מאגו הרבה יותר מתאנוס. רוברט דאוני ג'וניור הוא האדם היחיד שיכול לגלם את המורכבות העצומה הזו."
+                        </p>
+                        <p class="text-xs font-bold text-emerald-400">— אנתוני וג'ו רוסו, במאי הסרט</p>
+                    </div>
+                </div>
+
+                <!-- כרטיס נתונים טכניים (Wikipedia Infobox משודרג) -->
+                <div class="lg:col-span-5 reveal-left">
+                    <div class="doom-card rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-emerald-600 via-emerald-300 to-emerald-600"></div>
+                        
+                        <div class="flex items-center justify-between border-b border-white/10 pb-4 mb-6">
+                            <div>
+                                <h3 class="font-display font-black text-xl text-white">תעודת זהות קולנועית</h3>
+                                <p class="text-xs text-emerald-400 font-cinematic tracking-wider">PRODUCTION DOSSIER</p>
+                            </div>
+                            <span class="px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30">
+                                שלב 6 • MCU #39
+                            </span>
+                        </div>
+
+                        <dl class="space-y-4 text-sm sm:text-base">
+                            <div class="flex justify-between py-2 border-b border-white/5">
+                                <dt class="text-slate-400 font-medium">בימוי</dt>
+                                <dd class="text-white font-bold text-left">אנתוני וג'ו רוסו</dd>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-white/5">
+                                <dt class="text-slate-400 font-medium">הפקה</dt>
+                                <dd class="text-white font-bold text-left">קווין פייגי, אנתוני וג'ו רוסו</dd>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-white/5">
+                                <dt class="text-slate-400 font-medium">תסריט</dt>
+                                <dd class="text-white font-bold text-left">סטיבן מק'פילי, מייקל וולדרון</dd>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-white/5">
+                                <dt class="text-slate-400 font-medium">מוזיקה</dt>
+                                <dd class="text-white font-bold text-left">אלן סילבסטרי</dd>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-white/5">
+                                <dt class="text-slate-400 font-medium">חברת הפקה</dt>
+                                <dd class="text-white font-bold text-left">אולפני מארוול, AGBO</dd>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-white/5">
+                                <dt class="text-slate-400 font-medium">הפצה</dt>
+                                <dd class="text-white font-bold text-left">סרטי אולפני וולט דיסני</dd>
+                            </div>
+                            <div class="flex justify-between py-2 border-b border-white/5">
+                                <dt class="text-slate-400 font-medium">תאריך בכורה</dt>
+                                <dd class="text-emerald-400 font-extrabold text-left">18 בדצמבר 2026</dd>
+                            </div>
+                            <div class="flex justify-between py-2">
+                                <dt class="text-slate-400 font-medium">סרט המשך</dt>
+                                <dd class="text-white font-bold text-left">הנוקמים: מלחמות סודיות</dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ספירה לאחור אינטראקטיבית ליציאת הסרט -->
+    <section id="countdown" class="py-12 px-4">
+        <div class="max-w-5xl mx-auto reveal-scale">
+            <div class="latverian-steel rounded-3xl p-8 sm:p-10 border border-emerald-500/30 shadow-2xl text-center relative overflow-hidden">
+                <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(16,185,129,0.15),transparent_70%)]"></div>
+                <h3 class="relative z-10 font-display font-bold text-xl sm:text-2xl text-emerald-300 mb-6">
+                    הזמן שנותר עד להתנגשות היקומים (18.12.2026)
+                </h3>
+                <div id="timer-grid" class="relative z-10 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl mx-auto">
+                    <div class="bg-black/60 backdrop-blur-md rounded-2xl p-4 border border-emerald-500/20">
+                        <span id="days" class="font-display font-black text-3xl sm:text-5xl text-white block">00</span>
+                        <span class="text-xs text-slate-400 uppercase tracking-wider">ימים</span>
+                    </div>
+                    <div class="bg-black/60 backdrop-blur-md rounded-2xl p-4 border border-emerald-500/20">
+                        <span id="hours" class="font-display font-black text-3xl sm:text-5xl text-white block">00</span>
+                        <span class="text-xs text-slate-400 uppercase tracking-wider">שעות</span>
+                    </div>
+                    <div class="bg-black/60 backdrop-blur-md rounded-2xl p-4 border border-emerald-500/20">
+                        <span id="minutes" class="font-display font-black text-3xl sm:text-5xl text-white block">00</span>
+                        <span class="text-xs text-slate-400 uppercase tracking-wider">דקות</span>
+                    </div>
+                    <div class="bg-black/60 backdrop-blur-md rounded-2xl p-4 border border-emerald-500/20">
+                        <span id="seconds" class="font-display font-black text-3xl sm:text-5xl text-emerald-400 block">00</span>
+                        <span class="text-xs text-slate-400 uppercase tracking-wider">שניות</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- עלילה והתנגשות שלושת היקומים -->
+    <section id="plot" class="py-24 px-4 relative bg-gradient-to-b from-transparent via-emerald-950/10 to-transparent">
+        <div class="max-w-6xl mx-auto space-y-16">
+            <div class="text-center max-w-3xl mx-auto space-y-4 reveal-up">
+                <span class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold uppercase tracking-widest">
+                    רקע עלילתי • Multiverse Incursion
+                </span>
+                <h2 class="font-display font-black text-3xl sm:text-5xl text-white">
+                    שלושה יקומים במסלול התנגשות
+                </h2>
+                <p class="text-slate-300 text-base sm:text-lg leading-relaxed">
+                    ארבעה עשר חודשים לאחר אירועי הכרזת צוות הנוקמים החדש (<em>Thunderbolts*</em>), בעיצומה של קריסת הרב-יקום, נאלצים גיבורים משלושה עולמות שונים להתאחד כדי לעצור את <strong>דוקטור דום</strong>.
+                </p>
+            </div>
+
+            <!-- 3 כרטיסיות היקומים המתנגשים -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- יקום 616 -->
+                <div class="doom-card rounded-3xl p-7 space-y-5 reveal-up" style="transition-delay: 0.1s;">
+                    <div class="w-14 h-14 rounded-2xl bg-blue-500/15 border border-blue-400/30 flex items-center justify-center text-blue-400">
+                        <i data-lucide="shield" class="w-7 h-7"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-cinematic font-bold text-blue-400 tracking-widest">EARTH-616</span>
+                        <h3 class="font-display font-black text-2xl text-white mt-1">הנוקמים, ואקאנדה והת'נדרבולטס</h3>
+                    </div>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        צוות הנוקמים החדש בהנהגת קפטן אמריקה (סם וילסון), לצד לוחמי ואקאנדה וטאלוקאן, צוות הת'נדרבולטס, תור, לוקי, וסטיב רוג'רס השב בתור "נווד".
+                    </p>
+                    <div class="pt-2 flex flex-wrap gap-2">
+                        <span class="text-xs px-2.5 py-1 rounded-md bg-blue-950/60 text-blue-300 border border-blue-500/20">הנוקמים</span>
+                        <span class="text-xs px-2.5 py-1 rounded-md bg-blue-950/60 text-blue-300 border border-blue-500/20">ואקאנדה</span>
+                        <span class="text-xs px-2.5 py-1 rounded-md bg-blue-950/60 text-blue-300 border border-blue-500/20">ת'נדרבולטס</span>
+                    </div>
+                </div>
+
+                <!-- יקום 828 -->
+                <div class="doom-card rounded-3xl p-7 space-y-5 reveal-up" style="transition-delay: 0.25s;">
+                    <div class="w-14 h-14 rounded-2xl bg-cyan-500/15 border border-cyan-400/30 flex items-center justify-center text-cyan-400">
+                        <i data-lucide="atom" class="w-7 h-7"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-cinematic font-bold text-cyan-400 tracking-widest">EARTH-828</span>
+                        <h3 class="font-display font-black text-2xl text-white mt-1">ארבעת המופלאים</h3>
+                    </div>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        ריד ריצ'רדס (מיסטר פנטסטיק), סו סטורם (האישה הבלתי נראית), ג'וני סטורם (הלפיד האנושי) ובן גרים (הדבר) – החולקים קשר מדעי והיסטורי עמוק עם ויקטור פון דום.
+                    </p>
+                    <div class="pt-2 flex flex-wrap gap-2">
+                        <span class="text-xs px-2.5 py-1 rounded-md bg-cyan-950/60 text-cyan-300 border border-cyan-500/20">בניין בקסטר</span>
+                        <span class="text-xs px-2.5 py-1 rounded-md bg-cyan-950/60 text-cyan-300 border border-cyan-500/20">מדע וקוסמוס</span>
+                    </div>
+                </div>
+
+                <!-- יקום 10005 -->
+                <div class="doom-card rounded-3xl p-7 space-y-5 reveal-up" style="transition-delay: 0.4s;">
+                    <div class="w-14 h-14 rounded-2xl bg-amber-500/15 border border-amber-400/30 flex items-center justify-center text-amber-400">
+                        <i data-lucide="dna" class="w-7 h-7"></i>
+                    </div>
+                    <div>
+                        <span class="text-xs font-cinematic font-bold text-amber-400 tracking-widest">EARTH-10005</span>
+                        <h3 class="font-display font-black text-2xl text-white mt-1">האקס-מן (X-Men)</h3>
+                    </div>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        המוטאנטים האגדיים מיקום האקס-מן הקלאסי – ביניהם פרופסור אקס, מגנטו, סייקלופס, חיה, נייטקרולר, מיסטיק וגמביט – נשאבים אל תוך המאבק על הישרדות המציאות.
+                    </p>
+                    <div class="pt-2 flex flex-wrap gap-2">
+                        <span class="text-xs px-2.5 py-1 rounded-md bg-amber-950/60 text-amber-300 border border-amber-500/20">מוטאנטים</span>
+                        <span class="text-xs px-2.5 py-1 rounded-md bg-amber-950/60 text-amber-300 border border-amber-500/20">אחוזת אקסבייר</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- צוות השחקנים והדמויות עם סינון אינטראקטיבי -->
+    <section id="cast" class="py-24 px-4 relative">
+        <div class="max-w-7xl mx-auto space-y-12">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 reveal-up">
+                <div class="space-y-3">
+                    <span class="text-emerald-400 font-bold text-sm tracking-wider uppercase flex items-center gap-2">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i>
+                        אנסמבל היסטורי
+                    </span>
+                    <h2 class="font-display font-black text-3xl sm:text-5xl text-white">
+                        צוות השחקנים והדמויות
+                    </h2>
+                </div>
+
+                <!-- כפתורי סינון לפי קבוצה -->
+                <div class="flex flex-wrap gap-2" id="cast-filters">
+                    <button data-filter="all" class="filter-btn active px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-emerald-500 text-black transition-all">
+                        הכל (27)
+                    </button>
+                    <button data-filter="doom" class="filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10 transition-all">
+                        דוקטור דום
+                    </button>
+                    <button data-filter="avengers" class="filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10 transition-all">
+                        הנוקמים וואקאנדה
+                    </button>
+                    <button data-filter="thunderbolts" class="filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10 transition-all">
+                        ת'נדרבולטס
+                    </button>
+                    <button data-filter="f4" class="filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10 transition-all">
+                        ארבעת המופלאים
+                    </button>
+                    <button data-filter="xmen" class="filter-btn px-4 py-2 rounded-xl text-xs sm:text-sm font-bold bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10 transition-all">
+                        אקס-מן
+                    </button>
+                </div>
+            </div>
+
+            <!-- כרטיס זרקור מיוחד לדוקטור דום -->
+            <div class="doom-card rounded-3xl p-6 sm:p-10 border-emerald-500/40 relative overflow-hidden reveal-scale">
+                <div class="absolute -left-16 -bottom-16 w-64 h-64 bg-emerald-500/15 rounded-full blur-3xl"></div>
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+                    <div class="lg:col-span-4 flex flex-col items-center text-center space-y-3">
+                        <div class="w-28 h-28 rounded-3xl bg-gradient-to-br from-emerald-500 via-emerald-800 to-slate-900 p-1 shadow-2xl shadow-emerald-500/30">
+                            <div class="w-full h-full rounded-[20px] bg-slate-950 flex items-center justify-center">
+                                <i data-lucide="crown" class="w-12 h-12 text-emerald-400"></i>
+                            </div>
+                        </div>
+                        <span class="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30">
+                            האנטגוניסט הראשי
+                        </span>
+                        <h3 class="font-display font-black text-2xl sm:text-3xl text-white">רוברט דאוני ג'וניור</h3>
+                        <p class="text-emerald-400 font-bold text-base">ויקטור פון דום / דוקטור דום</p>
+                    </div>
+                    <div class="lg:col-span-8 space-y-4 text-slate-300 text-sm sm:text-base leading-relaxed">
+                        <p>
+                            לאחר שגילם במשך למעלה מעשור את טוני סטארק / איירון מן, חוזר <strong>רוברט דאוני ג'וניור</strong> ליקום הקולנועי של מארוול בתפקיד מפתיע: שליט לטבריה, מדען-על ומכשף אפל – <strong>ויקטור פון דום</strong>.
+                        </p>
+                        <p>
+                            נשיא אולפני מארוול קווין פייגי הבהיר כי דום אינו גרסה חלופית (Variant) של טוני סטארק, אלא דמות מקורית ומורכבת בעלת סיפור רקע טראגי, מבטא כבד וגישה הפוכה לחלוטין להתמודדות עם אובדן. דאוני ג'וניור תרם רעיונות לעיצוב התלבושת ולבניית האישיות של הדמות כ"מניפולטור אמן".
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- רשת השחקנים הדינמית -->
+            <div id="cast-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                <!-- כרטיסיות השחקנים יוזרקו באמצעות JavaScript מתוך הנתונים של ויקיפדיה -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ציר זמן: הפקה ופיתוח הסרט -->
+    <section id="production" class="py-24 px-4 relative bg-gradient-to-b from-transparent via-slate-900/50 to-transparent">
+        <div class="max-w-5xl mx-auto space-y-16">
+            <div class="text-center space-y-4 reveal-up">
+                <span class="text-emerald-400 font-bold text-sm tracking-wider uppercase">מאחורי הקלעים</span>
+                <h2 class="font-display font-black text-3xl sm:text-5xl text-white">
+                    הפקה, שינוי כיוון ופיתוח
+                </h2>
+                <p class="text-slate-400 max-w-2xl mx-auto">
+                    הדרך הארוכה מ"שושלת קאנג" ועד להכרזה הדרמטית בקומיק-קון בסן דייגו 2024.
+                </p>
+            </div>
+
+            <!-- ציר זמן אנכי מונפש -->
+            <div class="relative border-r-2 border-emerald-500/30 mr-4 sm:mr-8 space-y-12">
+                
+                <!-- שלב 1 -->
+                <div class="relative pr-8 sm:pr-12 reveal-right">
+                    <div class="absolute -right-[11px] top-1 w-5 h-5 rounded-full bg-emerald-500 ring-4 ring-emerald-500/20"></div>
+                    <div class="doom-card rounded-2xl p-6 space-y-2">
+                        <span class="text-xs font-bold text-emerald-400">יולי 2022</span>
+                        <h3 class="font-display font-bold text-xl text-white">ההכרזה המקורית: "שושלת קאנג"</h3>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            בכנס הקומיק-קון בסן דייגו הכריז קווין פייגי על שני סרטי נוקמים שיחתמו את סאגת המולטיוורס: <em>"הנוקמים: שושלת קאנג"</em> בבימויו של דסטין דניאל קרטון ובכיכובו של ג'ונתן מייג'ורס כקאנג הכובש, ו<em>"מלחמות סודיות"</em>.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- שלב 2 -->
+                <div class="relative pr-8 sm:pr-12 reveal-right">
+                    <div class="absolute -right-[11px] top-1 w-5 h-5 rounded-full bg-emerald-500 ring-4 ring-emerald-500/20"></div>
+                    <div class="doom-card rounded-2xl p-6 space-y-2">
+                        <span class="text-xs font-bold text-emerald-400">סוף 2023 – תחילת 2024</span>
+                        <h3 class="font-display font-bold text-xl text-white">השינוי היצירתי והתסריט החדש</h3>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            בעקבות עזיבת הבמאי קרטון ופיטוריו של ג'ונתן מייג'ורס בדצמבר 2023, החליטו אולפני מארוול לשנות כיוון עלילתי. מייקל וולדרון ובהמשך סטיבן מק'פילי נשכרו לכתוב מחדש את התסריט ולהציב את דוקטור דום במרכז העלילה.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- שלב 3 -->
+                <div class="relative pr-8 sm:pr-12 reveal-right">
+                    <div class="absolute -right-[11px] top-1 w-5 h-5 rounded-full bg-emerald-400 ring-4 ring-emerald-400/30 animate-pulse"></div>
+                    <div class="doom-card rounded-2xl p-6 space-y-2 border-emerald-500/40">
+                        <span class="text-xs font-bold text-emerald-400">יולי 2024 • San Diego Comic-Con</span>
+                        <h3 class="font-display font-bold text-xl text-white">החשיפה ההיסטורית: שובם של האחים רוסו ודאוני ג'וניור</h3>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            באירוע מתוקשר חשפו אולפני מארוול את השם החדש <strong>"Avengers: Doomsday"</strong>, את שובם של אנתוני וג'ו רוסו לכס הבימוי, ואת רוברט דאוני ג'וניור שמסיר את המסיכה הירוקה על הבמה כדוקטור דום.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- שלב 4 -->
+                <div class="relative pr-8 sm:pr-12 reveal-right">
+                    <div class="absolute -right-[11px] top-1 w-5 h-5 rounded-full bg-emerald-500 ring-4 ring-emerald-500/20"></div>
+                    <div class="doom-card rounded-2xl p-6 space-y-2">
+                        <span class="text-xs font-bold text-emerald-400">2025 – 2026</span>
+                        <h3 class="font-display font-bold text-xl text-white">שידור הכיסאות האייקוני, צילומים ופוסט-פרודקשן</h3>
+                        <p class="text-slate-300 text-sm leading-relaxed">
+                            במרץ 2025 שידרה מארוול שידור חי בן מעל חמש שעות שחשף את שמות השחקנים על כיסאות הפקה. הצילומים התקיימו באולפני פיינווד בבריטניה ובלוקיישנים נוספים, עם פסקול מאת המלחין הוותיק אלן סילבסטרי.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- פוטר -->
+    <footer class="border-t border-white/10 bg-black/80 py-12 px-4 text-center space-y-4">
+        <div class="flex items-center justify-center gap-2 text-emerald-400 font-display font-bold text-lg">
+            <i data-lucide="shield-alert" class="w-5 h-5"></i>
+            <span>הנוקמים: עלייתו של ד"ר דום</span>
+        </div>
+        <p class="text-slate-400 text-xs sm:text-sm max-w-xl mx-auto">
+            התוכן באתר מעובד מתוך הערך האנציקלופדי בוויקיפדיה העברית והאנגלית אודות הסרט "Avengers: Doomsday" (2026). כל הזכויות לדמויות שייכות ל-Marvel Studios.
+        </p>
+        <div class="pt-2">
+            <a href="#hero" class="inline-flex items-center gap-1.5 text-xs text-emerald-400 hover:text-emerald-300 font-semibold">
+                <i data-lucide="arrow-up" class="w-4 h-4"></i>
+                חזרה לראש העמוד
+            </a>
+        </div>
+    </footer>
+
+    <script>
+        // אתחול אייקונים של Lucide
+        lucide.createIcons();
+
+        // מאגר השחקנים והדמויות המבוסס על ערך ויקיפדיה
+        const castMembers = [
+            { actor: "רוברט דאוני ג'וניור", role: "ויקטור פון דום / דוקטור דום", group: "doom", universe: "לטבריה / מולטיוורס", desc: "שליט לטבריה ומכשף מדעי רב-עוצמה המהווה איום קיומי על כל היקומים." },
+            { actor: "כריס אוונס", role: "סטיב רוג'רס / נווד", group: "avengers", universe: "Earth-616", desc: "מנהיג הנוקמים לשעבר השב אל שדה הקרב בזהותו של 'נווד' בעקבות משבר הרב-יקום." },
+            { actor: "כריס המסוורת'", role: "תור", group: "avengers", universe: "Earth-616", desc: "אל הרעם האסגרדי ומייסד הנוקמים, השב לגישת הלוחם המנוסה." },
+            { actor: "טום הידלסטון", role: "לוקי", group: "avengers", universe: "TVA / עץ הזמן", desc: "אחיו המאומץ של תור ואל הסיפורים השומר על קווי הזמן של המולטיוורס." },
+            { actor: "אנתוני מאקי", role: "סם וילסון / קפטן אמריקה", group: "avengers", universe: "Earth-616", desc: "מנהיג צוות הנוקמים החדש הלוחם בעזרת כנפי ויברניום ומגן הקפטן." },
+            { actor: "פול ראד", role: "סקוט לאנג / אנטמן", group: "avengers", universe: "Earth-616", desc: "גיבור-על המסוגל לשנות את גודלו באמצעות חלקיקי פים ומנוסה בממלכת הקוונטים." },
+            { actor: "לטישה רייט", role: "שורי / הפנתרה השחורה", group: "avengers", universe: "Earth-616", desc: "מנהיגת ומגינת ואקאנדה והמוח הטכנולוגי המבריק של הממלכה." },
+            { actor: "וינסטון דיוק", role: "מ'באקו", group: "avengers", universe: "Earth-616", desc: "מלך ואקאנדה ומנהיג שבט הג'בארי רב-העוצמה." },
+            { actor: "טנוך הוארטה", role: "נאמור", group: "avengers", universe: "Earth-616", desc: "שליט ממלכת טאלוקאן התת-ימית ומוטאנט בעל כוחות אדירים." },
+            { actor: "דני רמירז", role: "חואקין טורס / פלקון", group: "avengers", universe: "Earth-616", desc: "לוטננט בחיל האוויר ושותפו המעופף של סם וילסון." },
+            { actor: "סימו ליו", role: "שאנג-צ'י", group: "avengers", universe: "Earth-616", desc: "אמן לחימה ונושא עשר הטבעות המסתוריות." },
+            { actor: "סבסטיאן סטן", role: "ג'יימס 'באקי' בארנס", group: "thunderbolts", universe: "Earth-616", desc: "חייל-על בעל זרוע קיברנטית והמנהיג דה פקטו של צוות ת'נדרבולטס." },
+            { actor: "פלורנס פיו", role: "ילנה בלובה / האלמנה השחורה", group: "thunderbolts", universe: "Earth-616", desc: "מתנקשת מיומנת מהחדר האדום ואחת הדמויות המרכזיות בצוות הנוקמים החדשים." },
+            { actor: "דייוויד הארבור", role: "אלכסיי שוסטקוב / השומר האדום", group: "thunderbolts", universe: "Earth-616", desc: "חייל-על סובייטי ודמות אב לילנה בלובה." },
+            { actor: "ואייט ראסל", role: "ג'ון ווקר / סוכן ארצות הברית", group: "thunderbolts", universe: "Earth-616", desc: "חייל-על וחבר בצוות ת'נדרבולטס." },
+            { actor: "האנה ג'ון-קאמן", role: "אווה סטאר / רוח", group: "thunderbolts", universe: "Earth-616", desc: "בעלת יכולת לעבור דרך חפצים מוצקים ובלתי נראית." },
+            { actor: "לואיס פולמן", role: "בוב / הסנטרי", group: "thunderbolts", universe: "Earth-616", desc: "ישות בעלת כוחות על-אנושיים עצומים הסובלת מאמנזיה." },
+            { actor: "פדרו פסקל", role: "ריד ריצ'רדס / מיסטר פנטסטיק", group: "f4", universe: "Earth-828", desc: "מנהיג ארבעת המופלאים ומדען גאון בעל קשר אינטלקטואלי מורכב לדוקטור דום." },
+            { actor: "ונסה קירבי", role: "סו סטורם / האישה הבלתי נראית", group: "f4", universe: "Earth-828", desc: "חברה מרכזית בארבעת המופלאים, בעלת יכולת ליצור שדות כוח ולהיעלם." },
+            { actor: "ג'וזף קווין", role: "ג'וני סטורם / הלפיד האנושי", group: "f4", universe: "Earth-828", desc: "אחיה של סו המסוגל לעטוף את גופו באש ולעוף במהירות על-קולית." },
+            { actor: "אבון מוס-בכרך", role: "בן גרים / הדבר", group: "f4", universe: "Earth-828", desc: "טייס לשעבר שגופו הפך לסלע כתום בלתי חדיר בעל כוח פיזי אדיר." },
+            { actor: "פטריק סטיוארט", role: "צ'ארלס אקסבייר / פרופסור X", group: "xmen", universe: "Earth-10005", desc: "מייסד האקס-מן ואחד הטלפתים החזקים בעולם." },
+            { actor: "איאן מקלן", role: "אריק לנשר / מגנטו", group: "xmen", universe: "Earth-10005", desc: "שליט המגנטיות וידידו-יריבו הוותיק של פרופסור אקס." },
+            { actor: "ג'יימס מרסדן", role: "סקוט סאמרס / סייקלופס", group: "xmen", universe: "Earth-10005", desc: "מנהיג השטח של האקס-מן היורה קרני אנרגיה אופטיות מעיניו." },
+            { actor: "קלסי גראמר", role: "האנק מקוי / חיה", group: "xmen", universe: "Earth-10005", desc: "מדען מבריק ומוטאנט בעל כוח וזריזות יוצאי דופן." },
+            { actor: "אלן קאמינג", role: "קורט וגנר / נייטקרולר", group: "xmen", universe: "Earth-10005", desc: "מוטאנט בעל יכולת טלפורטציה מיידית." },
+            { actor: "רבקה רומיין", role: "רייבן דארקהולם / מיסטיק", group: "xmen", universe: "Earth-10005", desc: "משנת-צורה מיומנת מיקום האקס-מן." },
+            { actor: "צ'נינג טייטום", role: "רמי לבו / גמביט", group: "xmen", universe: "Earth-10005", desc: "מוטאנט הטוען קלפים באנרגיה קינטית נפיצה." }
+        ];
+
+        const castGrid = document.getElementById('cast-grid');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+
+        const groupBadgeStyles = {
+            doom: "bg-emerald-500/20 text-emerald-300 border-emerald-500/40",
+            avengers: "bg-blue-500/20 text-blue-300 border-blue-500/40",
+            thunderbolts: "bg-rose-500/20 text-rose-300 border-rose-500/40",
+            f4: "bg-cyan-500/20 text-cyan-300 border-cyan-500/40",
+            xmen: "bg-amber-500/20 text-amber-300 border-amber-500/40"
+        };
+
+        function renderCast(filter = 'all') {
+            castGrid.innerHTML = '';
+            const filtered = filter === 'all' ? castMembers : castMembers.filter(m => m.group === filter);
+            
+            filtered.forEach((member, idx) => {
+                const badgeClass = groupBadgeStyles[member.group] || groupBadgeStyles.avengers;
+                const card = document.createElement('div');
+                card.className = 'doom-card rounded-2xl p-5 flex flex-col justify-between space-y-4 opacity-0 translate-y-4 transition-all duration-500';
+                card.innerHTML = `
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between gap-2">
+                            <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${badgeClass}">
+                                ${member.universe}
+                            </span>
+                            <i data-lucide="user-check" class="w-4 h-4 text-slate-500"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-display font-bold text-lg text-white leading-snug">${member.actor}</h4>
+                            <p class="text-emerald-400 font-semibold text-sm">${member.role}</p>
+                        </div>
+                        <p class="text-slate-400 text-xs leading-relaxed">
+                            ${member.desc}
+                        </p>
+                    </div>
+                `;
+                castGrid.appendChild(card);
+                setTimeout(() => {
+                    card.classList.remove('opacity-0', 'translate-y-4');
+                }, idx * 35);
+            });
+            lucide.createIcons();
+        }
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => {
+                    b.classList.remove('bg-emerald-500', 'text-black');
+                    b.classList.add('bg-white/5', 'text-slate-300');
+                });
+                btn.classList.remove('bg-white/5', 'text-slate-300');
+                btn.classList.add('bg-emerald-500', 'text-black');
+                renderCast(btn.dataset.filter);
+            });
+        });
+
+        renderCast();
+
+        // אנימציות גלילה (Intersection Observer)
+        const observerOptions = {
+            threshold: 0.12,
+            rootMargin: "0px 0px -40px 0px"
+        };
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal-up, .reveal-right, .reveal-left, .reveal-scale').forEach(el => {
+            revealObserver.observe(el);
+        });
+
+        // עדכון פס התקדמות גלילה ואפקט Parallax ב-Hero
+        const scrollProgress = document.getElementById('scroll-progress');
+        const heroContent = document.getElementById('hero-content');
+
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / docHeight) * 100;
+            scrollProgress.style.width = `${scrollPercent}%`;
+
+            // Parallax עדין לאזור הפתיחה
+            if (scrollTop < window.innerHeight) {
+                heroContent.style.transform = `translateY(${scrollTop * 0.25}px)`;
+                heroContent.style.opacity = `${1 - scrollTop / (window.innerHeight * 0.85)}`;
+            }
+        });
+
+        // טיימר ספירה לאחור ל-18 בדצמבר 2026
+        const targetDate = new Date('December 18, 2026 00:00:00').getTime();
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const diff = targetDate - now;
+
+            if (diff <= 0) {
+                document.getElementById('timer-grid').innerHTML = `<div class="col-span-4 text-2xl font-bold text-emerald-400">הסרט יצא לאקרנים!</div>`;
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById('days').textContent = String(days).padStart(2, '0');
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+        }
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        // קנבס חלקיקי אנרגיה ירוקים ברקע
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2.5 + 0.5;
+                this.speedY = -(Math.random() * 0.6 + 0.2);
+                this.speedX = (Math.random() - 0.5) * 0.4;
+                this.alpha = Math.random() * 0.6 + 0.2;
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                if (this.y < 0) {
+                    this.y = canvas.height;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+            draw() {
+                ctx.fillStyle = `rgba(52, 211, 153, ${this.alpha})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 65; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        window.onload = function() {
+            animateParticles();
+        };
+    </script>
+</body>
+</html>
